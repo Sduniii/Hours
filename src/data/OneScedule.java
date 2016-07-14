@@ -46,7 +46,7 @@ public class OneScedule {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    private void setDuration(long duration) {
         this.duration = duration;
     }
 

@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class Hours extends Application {
 
-    public static final String APPLICATION_ICON = "assets/logo.png";
+    private static final String APPLICATION_ICON = "assets/logo.png";
 
     public static void main(String[] args) {
         launch(args);
