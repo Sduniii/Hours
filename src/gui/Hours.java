@@ -3,6 +3,7 @@ package gui; /**
  */
 
 import data.OneScedule;
+import enums.SingleInstanceChecker;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,10 +25,20 @@ public class Hours extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        if (!SingleInstanceChecker.INSTANCE.isOnlyInstance(Hours::otherInstanceTriedToLaunch, false)) {
+            System.exit(0);
+        }
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         primaryStage.setTitle("Hours");
         primaryStage.getIcons().add(new Image(APPLICATION_ICON));
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
+    }
+
+    private static void otherInstanceTriedToLaunch() {
+        // Restore your application window and bring it to front.
+        // But make sure your situation is apt: This method could be called at *any* time.
+        System.err.println("Deiconified because other instance tried to start.");
     }
 }
