@@ -5,6 +5,8 @@ import com.google.gson.annotations.Expose;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tbaios on 13.07.2016.
@@ -12,38 +14,50 @@ import java.util.List;
 public class Where {
 
     @Expose
-    private List<Corperation> state;
+    private List<Corperation> corperations;
 
     public Where(){
-        this.state = new LinkedList<>();
+        this.corperations = new LinkedList<>();
     }
 
     public void addCorp(Corperation c){
-        this.state.add(c);
+        this.corperations.add(c);
     }
 
-    public Corperation getCorp(int s){
+    public Corperation getCorp(String s){
         try{
-            Corperation c = this.state.get(s);
-            return c;
+            List<Corperation> l = corperations.stream().filter(e->e.getName().equalsIgnoreCase(s)).collect(Collectors.toList());
+            if(l.size() > 0){
+                return l.get(0);
+            }else{
+                return null;
+            }
         }catch(Exception e){
             return null;
         }
 
     }
 
-    public List<Corperation> getState() {
-        return state;
+    public List<Corperation> getCorperations() {
+        return corperations;
     }
 
-    public void setState(List<Corperation> state) {
-        this.state = state;
+    public void setCorperations(List<Corperation> corperations) {
+        this.corperations = corperations;
     }
 
     @Override
     public String toString(){
         Gson g = new Gson();
 
-        return g.toJson(this.state);
+        return g.toJson(this.corperations);
+    }
+
+    public void deleteCorp(String selectedItem) {
+        for (int i = 0; i < this.corperations.size(); i++) {
+            if(this.corperations.get(i).getName().equalsIgnoreCase(selectedItem)){
+                this.corperations.remove(i);
+            }
+        }
     }
 }

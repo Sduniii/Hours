@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tbaios on 13.07.2016.
@@ -11,9 +12,9 @@ import java.util.List;
 public class Corperation {
 
     @Expose
-    private List<OneScedule> times;
-    @Expose
     private String name;
+    @Expose
+    private List<OneScedule> times;
 
     public Corperation(String name) {
         this.name = name;
@@ -45,5 +46,10 @@ public class Corperation {
         }
 
         return d;
+    }
+
+    public void deleteTimes(List<OneScedule> l){
+        List<OneScedule> intersect = l.stream().filter(times::contains).collect(Collectors.toList());
+        intersect.forEach(o-> System.out.println(o.toString()));
     }
 }
