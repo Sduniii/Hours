@@ -21,9 +21,7 @@ public class OneSceduleDeserializer implements JsonDeserializer<OneScedule> {
             final JsonElement jsonStop = jsonObject.get("stop");
             final MyDate stop = MyDateFormater.parse((new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z")).parse(jsonStop.getAsString()));
 
-            final OneScedule scedule = new OneScedule(start,stop);
-
-            return scedule;
+            return new OneScedule(start,stop);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;

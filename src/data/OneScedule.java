@@ -23,7 +23,7 @@ public class OneScedule {
     public OneScedule(MyDate start, MyDate stop){
         this.start = start;
         this.stop = stop;
-        calcDuration(TimeScale.MINS);
+        calcDuration(TimeScale.SECS);
     }
 
     public Date getStop() {
@@ -58,7 +58,7 @@ public class OneScedule {
                 '}';
     }
 
-    public long calcDuration(TimeScale scale){
+    private void calcDuration(TimeScale scale){
 
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
@@ -69,21 +69,27 @@ public class OneScedule {
         long diff = milsecs2 - milsecs1;
         switch (scale){
             case MILLIS:
-                return diff;
+                setDuration(diff);
+                break;
             case SECS:
-                return diff / 1000;
+                setDuration(diff / 1000);
+                break;
             case MINS:
-                return diff / (60 * 1000);
+                setDuration(diff / (60 * 1000));
+                break;
             case HOURS:
-                return diff / (60 * 60 * 1000);
+                setDuration(diff / (60 * 60 * 1000));
+                break;
             case DAYS:
-                return diff / (24 * 60 * 60 * 1000);
+                setDuration(diff / (24 * 60 * 60 * 1000));
+                break;
             default:
-                return 0;
+                setDuration(0);
+                break;
         }
     }
 
-    public enum TimeScale{
+    private enum TimeScale{
         MILLIS,SECS,MINS,HOURS,DAYS
     }
 }

@@ -3,6 +3,7 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import data.*;
+import gui.AlertBox;
 import gui.ConfirmBox;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
@@ -230,6 +231,17 @@ public class MainController implements Initializable {
                 }
                 writeJson(file, gson.toJson(where));
             }
+        }
+    }
+
+    @FXML
+    public void calculateButtonClicked(){
+        if(this.tableView.getItems().size() > 0){
+            double time = 0;
+            for(OneScedule sc : this.tableView.getItems()){
+                time += sc.getDuration();
+            }
+            AlertBox.display("Result", Double.toString(time / (60*60)) + "h");
         }
     }
 }
