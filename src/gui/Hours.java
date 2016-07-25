@@ -2,18 +2,13 @@ package gui; /**
  * Created by Tbaios on 14.07.2016.
  */
 
-import data.OneScedule;
 import enums.SingleInstanceChecker;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class Hours extends Application {
 
@@ -25,6 +20,7 @@ public class Hours extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
 
         if (!SingleInstanceChecker.INSTANCE.isOnlyInstance(Hours::otherInstanceTriedToLaunch, false)) {
             System.exit(0);

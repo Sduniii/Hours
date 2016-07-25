@@ -150,13 +150,19 @@ public class MainController implements Initializable {
             protected List<MyDate> call() throws Exception {
                 long start = System.currentTimeMillis();
                 MyDate startDate = new MyDate();
+                String seconds;
+                String minutes;
+                String hours;
+                long elapsedTime = 0;
                 while (isRunning) {
-                    long elapsedTime = System.currentTimeMillis() - start;
+                    //printMemory();
+                    Thread.sleep(500);
+                    elapsedTime = System.currentTimeMillis() - start;
                     elapsedTime = elapsedTime / 1000;
 
-                    String seconds = Integer.toString((int) (elapsedTime % 60));
-                    String minutes = Integer.toString((int) ((elapsedTime % 3600) / 60));
-                    String hours = Integer.toString((int) (elapsedTime / 3600));
+                    seconds = Integer.toString((int) (elapsedTime % 60));
+                    minutes = Integer.toString((int) ((elapsedTime % 3600) / 60));
+                    hours = Integer.toString((int) (elapsedTime / 3600));
 
                     if (seconds.length() < 2) {
                         seconds = "0" + seconds;
@@ -241,7 +247,33 @@ public class MainController implements Initializable {
             for(OneScedule sc : this.tableView.getItems()){
                 time += sc.getDuration();
             }
-            AlertBox.display("Result", Double.toString(time / (60*60)) + "h");
+            String seconds = Integer.toString((int) (time % 60));
+            String minutes = Integer.toString((int) ((time % 3600) / 60));
+            String hours = Integer.toString((int) (time / 3600));
+            AlertBox.display("Result", hours + ":" + minutes + ":" + seconds);
         }
+    }
+
+    public static void printMemory(){
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println("##### Heap utilization statistics [MB] #####");
+
+        //Print used memory
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb);
+
+        //Print free memory
+        System.out.println("Free Memory:"
+                + runtime.freeMemory() / mb);
+
+        //Print total available memory
+        System.out.println("Total Memory:" + runtime.totalMemory() / mb);
+
+        //Print Maximum available memory
+        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
     }
 }
