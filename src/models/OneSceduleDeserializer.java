@@ -1,6 +1,7 @@
-package data;
+package models;
 
 import com.google.gson.*;
+import utils.MyDateFormater;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;

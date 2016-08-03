@@ -2,7 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import data.*;
+import models.*;
 import gui.AlertBox;
 import gui.ConfirmBox;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -14,13 +14,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import utils.DateUtil;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -88,8 +86,7 @@ public class MainController implements Initializable {
                 this.comboBox.setValue(this.comboBox.getItems().get(0));
                 comboBoxAction();
             }
-
-
+            //System.out.println(DateUtil.roundToQuarter(new MyDate(new GregorianCalendar(1990,7,26,23,59,21))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -179,8 +176,8 @@ public class MainController implements Initializable {
                     updateMessage(hours + ":" + minutes + ":" + seconds);
                 }
                 ArrayList<MyDate> list = new ArrayList<>();
-                list.add(startDate);
-                list.add(new MyDate());
+                list.add(DateUtil.roundToQuarterDown(startDate));
+                list.add(DateUtil.roundToQuarterUp(new MyDate()));
                 return list;
             }
         };
@@ -219,7 +216,7 @@ public class MainController implements Initializable {
                 Corperation corp = this.where.getCorp(this.comboBox.getSelectionModel().getSelectedItem());
                 //System.out.println(corp);
                 tableView.getSelectionModel().getSelectedIndices().forEach(i -> {
-                    List<OneScedule> listC = corp.getTimes().stream().filter(s -> !((s.getStart().getTime() == scedules.get(i).getStart().getTime()) & (s.getStop().getTime() == scedules.get(i).getStop().getTime()))).collect(Collectors.toList());
+                    List<OneScedule> listC = corp.getTimes().stream().filter(s -> !((s.getStart().getCalendar().getTime() == scedules.get(i).getStart().getCalendar().getTime()) & (s.getStop().getCalendar().getTime() == scedules.get(i).getStop().getCalendar().getTime()))).collect(Collectors.toList());
                     scedules.remove(i);
                     corp.setTimes(listC);
                 });

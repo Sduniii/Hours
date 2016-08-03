@@ -1,4 +1,7 @@
-package data;
+package utils;
+
+import models.MyDate;
+
 
 import java.util.Date;
 
@@ -9,7 +12,7 @@ public class MyDateFormater {
 
     public static MyDate parse(Date date){
         MyDate d = new MyDate();
-        d.setTime(date.getTime());
+        d.getCalendar().setTime(date);
         return d;
     }
 }

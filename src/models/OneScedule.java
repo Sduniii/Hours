@@ -1,8 +1,7 @@
-package data;
+package models;
 
 import com.google.gson.annotations.Expose;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,7 +25,7 @@ public class OneScedule {
         calcDuration(TimeScale.SECS);
     }
 
-    public Date getStop() {
+    public MyDate getStop() {
         return stop;
     }
 
@@ -34,7 +33,7 @@ public class OneScedule {
         this.stop = stop;
     }
 
-    public Date getStart() {
+    public MyDate getStart() {
         return start;
     }
 
@@ -62,8 +61,8 @@ public class OneScedule {
 
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
-        calendar1.setTime(start);
-        calendar2.setTime(stop);
+        calendar1.setTime(start.getCalendar().getTime());
+        calendar2.setTime(stop.getCalendar().getTime());
         long milsecs1= calendar1.getTimeInMillis();
         long milsecs2 = calendar2.getTimeInMillis();
         long diff = milsecs2 - milsecs1;

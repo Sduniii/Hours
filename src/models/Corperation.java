@@ -1,4 +1,4 @@
-package data;
+package models;
 
 import com.google.gson.annotations.Expose;
 

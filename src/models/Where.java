@@ -1,11 +1,10 @@
-package data;
+package models;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
