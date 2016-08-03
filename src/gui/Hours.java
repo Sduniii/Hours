@@ -4,6 +4,7 @@ package gui; /**
 
 import enums.SingleInstanceChecker;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -25,6 +26,10 @@ public class Hours extends Application {
         if (!SingleInstanceChecker.INSTANCE.isOnlyInstance(Hours::otherInstanceTriedToLaunch, false)) {
             System.exit(0);
         }
+        primaryStage.setOnCloseRequest(e ->{
+            Platform.exit();
+            System.exit(0);
+        });
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         primaryStage.setTitle("Hours");
         primaryStage.getIcons().add(new Image(APPLICATION_ICON));

@@ -47,9 +47,4 @@ public class Corperation {
 
         return d;
     }
-
-    public void deleteTimes(List<OneScedule> l){
-        List<OneScedule> intersect = l.stream().filter(times::contains).collect(Collectors.toList());
-        intersect.forEach(o-> System.out.println(o.toString()));
-    }
 }

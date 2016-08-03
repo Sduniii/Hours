@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import enums.DeleteFocus;
 import models.*;
 import gui.AlertBox;
 import gui.ConfirmBox;
@@ -19,7 +20,6 @@ import utils.DateUtil;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Tbaios on 14.07.2016.
@@ -52,16 +52,19 @@ public class MainController implements Initializable {
     private final ObservableList<String> options = FXCollections.observableArrayList();
 
     private Task<List<MyDate>> task;
+    private DeleteFocus deleteFocus;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             this.isRunning = false;
+            this.deleteFocus = DeleteFocus.COMBOBOX;
             this.tableColumnStart.setCellValueFactory(new PropertyValueFactory<>("start"));
             this.tableColumnStop.setCellValueFactory(new PropertyValueFactory<>("stop"));
             this.tableColumnDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
             this.tableView.setItems(this.scedules);
             this.tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            this.tableView.focusedProperty().addListener((obs, oldValue, newValue) -> deleteFocus = DeleteFocus.TABLE);
 
 
             GsonBuilder gsonBuilder = new GsonBuilder();
@@ -86,6 +89,7 @@ public class MainController implements Initializable {
                 this.comboBox.setValue(this.comboBox.getItems().get(0));
                 comboBoxAction();
             }
+            this.comboBox.focusedProperty().addListener((obs, oldValue, newValue) -> deleteFocus = DeleteFocus.COMBOBOX);
             //System.out.println(DateUtil.roundToQuarter(new MyDate(new GregorianCalendar(1990,7,26,23,59,21))));
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,14 +151,16 @@ public class MainController implements Initializable {
             protected List<MyDate> call() throws Exception {
                 long start = System.currentTimeMillis();
                 MyDate startDate = new MyDate();
+                String millis;
                 String seconds;
                 String minutes;
                 String hours;
                 long elapsedTime = 0;
                 while (isRunning) {
                     //printMemory();
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                     elapsedTime = System.currentTimeMillis() - start;
+                    millis = Long.toString(elapsedTime%1000);
                     elapsedTime = elapsedTime / 1000;
 
                     seconds = Integer.toString((int) (elapsedTime % 60));
@@ -173,27 +179,27 @@ public class MainController implements Initializable {
                         hours = "0" + hours;
                     }
 
-                    updateMessage(hours + ":" + minutes + ":" + seconds);
+                    updateMessage(hours + ":" + minutes + ":" + seconds + ":" + millis);
                 }
                 ArrayList<MyDate> list = new ArrayList<>();
-                list.add(DateUtil.roundToQuarterDown(startDate));
-                list.add(DateUtil.roundToQuarterUp(new MyDate()));
+                list.addAll(DateUtil.getRounded(startDate,new MyDate()));
                 return list;
             }
         };
     }
 
     private void saveIt(ReadOnlyObjectProperty<List<MyDate>> result) {
-        result.get();
-        if (this.where.getCorp(this.comboBox.getSelectionModel().getSelectedItem()) != null) {
-            where.getCorp(comboBox.getSelectionModel().getSelectedItem()).getTimes().add(new OneScedule(result.get().get(0), result.get().get(1)));
-            scedules.clear();
-            where.getCorp(comboBox.getSelectionModel().getSelectedItem()).getTimes().forEach(scedules::add);
-            //System.out.println(gson.toJson(where));
-            this.where.getCorp(comboBox.getSelectionModel().getSelectedItem()).getTimes().forEach(e -> System.out.println(e));
-        }
+        if(result.get().size() > 0) {
+            if (this.where.getCorp(this.comboBox.getSelectionModel().getSelectedItem()) != null) {
+                where.getCorp(comboBox.getSelectionModel().getSelectedItem()).getTimes().add(new OneScedule(result.get().get(0), result.get().get(1)));
+                scedules.clear();
+                where.getCorp(comboBox.getSelectionModel().getSelectedItem()).getTimes().forEach(scedules::add);
+                //System.out.println(gson.toJson(where));
+                this.where.getCorp(comboBox.getSelectionModel().getSelectedItem()).getTimes().forEach(e -> System.out.println(e));
+            }
 
-        writeJson(this.file, gson.toJson(where));
+            writeJson(this.file, gson.toJson(where));
+        }
     }
 
     public interface InitCompletionHandler {
@@ -211,19 +217,25 @@ public class MainController implements Initializable {
 
     @FXML
     public void deleteButtonClicked() {
-        if (tableView.getSelectionModel().getSelectedIndices().size() > 0) {
+        if (deleteFocus == DeleteFocus.TABLE && !isRunning) {
             if (ConfirmBox.display("Delete", "You realy want delete the Times?")) {
                 Corperation corp = this.where.getCorp(this.comboBox.getSelectionModel().getSelectedItem());
                 //System.out.println(corp);
+                final ArrayList<OneScedule> lists = new ArrayList<OneScedule>();
                 tableView.getSelectionModel().getSelectedIndices().forEach(i -> {
-                    List<OneScedule> listC = corp.getTimes().stream().filter(s -> !((s.getStart().getCalendar().getTime() == scedules.get(i).getStart().getCalendar().getTime()) & (s.getStop().getCalendar().getTime() == scedules.get(i).getStop().getCalendar().getTime()))).collect(Collectors.toList());
+                    corp.getTimes().forEach(s -> {
+                        if (s.getStart().getCalendar().compareTo(scedules.get(i).getStart().getCalendar()) == 0 && s.getStop().getCalendar().compareTo(scedules.get(i).getStop().getCalendar()) == 0) {
+                            lists.add(s);
+                        }
+                    });
+                    corp.getTimes().removeAll(lists);
                     scedules.remove(i);
-                    corp.setTimes(listC);
+                    System.out.println(corp.getTimes());
                 });
                 comboBoxAction();
-                writeJson(file,gson.toJson(where));
+                writeJson(file, gson.toJson(where));
             }
-        } else if (this.comboBox.getSelectionModel().getSelectedIndex() > -1 && !isRunning) {
+        } else if (deleteFocus == DeleteFocus.COMBOBOX && this.comboBox.getSelectionModel().getSelectedIndex() > -1 && !isRunning) {
             if (ConfirmBox.display("Delete", "You realy want delete the Corperation?")) {
                 this.where.deleteCorp(this.comboBox.getSelectionModel().getSelectedItem());
                 this.options.remove(this.comboBox.getSelectionModel().getSelectedIndex());
@@ -238,21 +250,21 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void calculateButtonClicked(){
-        if(this.tableView.getItems().size() > 0){
+    public void calculateButtonClicked() {
+        if (this.tableView.getItems().size() > 0) {
             double time = 0;
-            for(OneScedule sc : this.tableView.getItems()){
+            for (OneScedule sc : this.tableView.getItems()) {
                 time += sc.getDuration();
             }
             String seconds = Integer.toString((int) (time % 60));
             String minutes = Integer.toString((int) ((time % 3600) / 60));
             String hours = Integer.toString((int) (time / 3600));
-            AlertBox.display("Result", hours + ":" + minutes + ":" + seconds);
+            AlertBox.display("Result", hours + ":" + (minutes.equals("0")?"00":minutes) + ":" + (seconds.equals("0")?"00":seconds));
         }
     }
 
-    public static void printMemory(){
-        int mb = 1024*1024;
+    public static void printMemory() {
+        int mb = 1024 * 1024;
 
         //Getting the runtime reference from system
         Runtime runtime = Runtime.getRuntime();
