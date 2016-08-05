@@ -259,7 +259,7 @@ public class MainController implements Initializable {
             String seconds = Integer.toString((int) (time % 60));
             String minutes = Integer.toString((int) ((time % 3600) / 60));
             String hours = Integer.toString((int) (time / 3600));
-            AlertBox.display("Result", hours + ":" + (minutes.equals("0")?"00":minutes) + ":" + (seconds.equals("0")?"00":seconds));
+            AlertBox.display("Result", hours + ":" + (minutes.equals("0")?"00":(minutes.length()==1?"0"+minutes:minutes)) + ":" + (seconds.equals("0")?"00":(seconds.length()==1?"0"+seconds:seconds)));
         }
     }
 
