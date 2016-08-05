@@ -43,10 +43,10 @@ public class DateUtil {
         //System.out.println(dateStart.getCalendar().compareTo(dateStop.getCalendar()));
         if (dateStart.getCalendar().compareTo(dateStop.getCalendar()) < 0) {
             //System.out.println(dateStop.getCalendar().getTimeInMillis() - dateStart.getCalendar().getTimeInMillis());
-            if (dateStop.getCalendar().getTimeInMillis() - dateStart.getCalendar().getTimeInMillis() > 600000) {
+            if (dateStop.getCalendar().getTimeInMillis() - dateStart.getCalendar().getTimeInMillis() > 900000) {
                 List<MyDate> l = new ArrayList<>();
                 l.add(roundToQuarterDown(dateStart));
-                l.add(roundToQuarterUp(dateStop));
+                l.add(roundToQuarterDown(dateStop));
                 return l;
             }
         }
